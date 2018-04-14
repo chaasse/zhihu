@@ -5,7 +5,7 @@ import hmac, json  #这几个需要导入的可以从js中获取，加密需要�
 from bs4 import BeautifulSoup
 from hashlib import sha1
 
-def get_signature(grantType, clientId, source, timestamp):
+def handle_signature(grantType, clientId, source, timestamp):
     ''' 处理签名 '''
 
     hm = hmac.new(b'd1b964811afb40118a12068ff74a12f4', None, sha1) # 这个数字在js中查找
@@ -17,13 +17,14 @@ def get_signature(grantType, clientId, source, timestamp):
     return str(hm.hexdigest())
 
 
-def login(username, password, s,header):
+def handle_login(username, password, s,header):
     ''' 处理login '''
     grantType = 'password'
     clientId = 'c3cef7c66a1843f8b3a9e6a1e3160e20'
     source = 'com.zhihu.web'
     timestamp = str(int(time.time()*1000))
     resp2 = s.get('https://www.zhihu.com/api/v3/oauth/captcha?lang=cn', headers=header) # 拿cookie
+    # 这个一定要访问，如果不去判断是否需要验证码，下面无法进行
     data = {
         "client_id": clientId,
         "grant_type": grantType,
@@ -55,7 +56,7 @@ if __name__ == "__main__":
                }
 
     login('1833980716', '89108920.com', session, headers)  # 用户名密码换自己的就好了
-    resp = session.get('https://www.zhihu.com/inbox', headers=headers)  # 登录进去了
+    resp = session.get('https://www.zhihu.com/inbox', headers=headers)  # 登录
     print(BeautifulSoup(resp.content, 'html.parser'))
     print(resp.cookies.items())
     print(resp.cookies)
