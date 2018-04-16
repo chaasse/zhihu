@@ -17,14 +17,13 @@ def handle_signature(grantType, clientId, source, timestamp):
     return str(hm.hexdigest())
 
 
-def handle_login(username, password, s,header):
+def login(username, password, s,header):
     ''' 处理login '''
     grantType = 'password'
     clientId = 'c3cef7c66a1843f8b3a9e6a1e3160e20'
     source = 'com.zhihu.web'
     timestamp = str(int(time.time()*1000))
-    resp2 = s.get('https://www.zhihu.com/api/v3/oauth/captcha?lang=cn', headers=header) # 拿cookie
-    # 这个一定要访问，如果不去判断是否需要验证码，下面无法进行
+
     data = {
         "client_id": clientId,
         "grant_type": grantType,
@@ -41,6 +40,8 @@ def handle_login(username, password, s,header):
 
     print("=========: " + str(data))
     print("-" * 50)
+    resp2 = s.get('https://www.zhihu.com/api/v3/oauth/captcha?lang=en', headers=header)  # 拿cookie
+    print(resp2.text)
     resp = s.post('https://www.zhihu.com/api/v3/oauth/sign_in', data, headers=headers).text
     print(resp)
     print("-" * 50)
@@ -49,15 +50,18 @@ def handle_login(username, password, s,header):
 
 if __name__ == "__main__":
     session = requests.Session()
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0',
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
                'authorization': 'oauth c3cef7c66a1843f8b3a9e6a1e3160e20',
-               "Referer":"https://www.zhihu.com/signup?next=%2F"
+               "X-UDID": "AOCg84o2cw2PTtM0fuSB6i0YkxbJybCDVLs=",
+               # "Referer":"https://www.zhihu.com/signup?next=%2F"
                # 通过看headers中的数据，可以把感觉有用的都加上
                }
 
-    handle_login('1833980716', '89108920.com', session, headers)  # 用户名密码换自己的就好了
-    resp = session.get('https://www.zhihu.com/inbox', headers=headers)  # 登录
-    print(BeautifulSoup(resp.content, 'html.parser'))
-    print(resp.cookies.items())
-    print(resp.cookies)
+    login('18339180716', '891068920.com', session, headers)  # 用户名密码换自己的就好了
+    resp = session.get('https://www.zhihu.com/inbox', headers=headers)  # 登录进去了
+    print(resp.text)
+    # print(resp.cookies.items())
+    # print(resp.cookies)
+
+
 
