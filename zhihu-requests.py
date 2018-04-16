@@ -30,7 +30,7 @@ def handle_login(username, password, s,header):
         "grant_type": grantType,
         "timestamp": timestamp,
         "source": source,
-        "signature": get_signature(grantType, clientId, source, timestamp),  # 获取签名
+        "signature": handle_signature(grantType, clientId, source, timestamp),  # 获取签名
         "username": username,
         "password": password,
         "lang": "cn",
@@ -55,7 +55,7 @@ if __name__ == "__main__":
                # 通过看headers中的数据，可以把感觉有用的都加上
                }
 
-    login('1833980716', '89108920.com', session, headers)  # 用户名密码换自己的就好了
+    handle_login('1833980716', '89108920.com', session, headers)  # 用户名密码换自己的就好了
     resp = session.get('https://www.zhihu.com/inbox', headers=headers)  # 登录
     print(BeautifulSoup(resp.content, 'html.parser'))
     print(resp.cookies.items())
